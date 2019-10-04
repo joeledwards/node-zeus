@@ -1,0 +1,44 @@
+{
+  "name": "zeus",
+  "version": "1.0.0",
+  "description": "Utility functions and CLI for AWS Athena",
+  "main": "lib/index.js",
+  "bin": {
+    "zues": "./bin/zeus.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joeledwards/node-zeus.git"
+  },
+  "keywords": [
+    "athena",
+    "aws",
+    "presto",
+    "sql"
+  ],
+  "author": "Joel Edwards <joeledwards@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joeledwards/node-zeus/issues"
+  },
+  "homepage": "https://github.com/joeledwards/node-zeus#readme",
+  "dependencies": {
+    "@buzuli/color": "^2.2.2",
+    "@buzuli/json": "^2.0.2",
+    "@buzuli/meter": "^1.0.1",
+    "@buzuli/throttle": "^2.0.2",
+    "aws-sdk": "^2.541.0",
+    "byline": "^5.0.0",
+    "durations": "^3.4.1",
+    "gunzip-maybe": "^1.4.1",
+    "mem": "^5.1.1",
+    "moment": "^2.24.0",
+    "nodemailer": "^6.3.0",
+    "once": "^1.4.0",
+    "pretty-bytes": "^5.3.0",
+    "yargs": "^14.0.0"
+  }
+}
