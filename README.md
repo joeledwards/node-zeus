@@ -1,6 +1,6 @@
 # zeus
 
-Utility functions a CLI for AWS Athena.
+Utility functions and CLI for AWS Athena.
 
 ## CLI
 
