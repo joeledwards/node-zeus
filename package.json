@@ -6,6 +6,13 @@
   "bin": {
     "zues": "./bin/zeus.js"
   },
+  "files": [
+    "package.json",
+    "README.md",
+    "bin/*.js",
+    "commands/*.js",
+    "lib/**.js"
+  ],
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
