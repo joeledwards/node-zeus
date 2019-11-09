@@ -28,36 +28,61 @@ async function handler ({
   try {
     const aws = require('../lib/aws')
     const buzJson = require('@buzuli/json')
-    const promised = require('../lib/promised')
+    const prettyBytes = require('pretty-bytes')
     const { seconds } = require('durations')
 
     const s3 = aws.s3()
     const athena = aws.athena()
 
-    const {
-      bytesScanned,
-      executionTime,
-      finished,
-      state,
-      outputLocation
-    } = await athena.queryStatus(queryId)
-
-    const succeeded = finished && state === 'SUCCEEDED'
+    const queryInfo = await athena.queryStatus(queryId)
 
     if (json) {
-      console.info(buzJson({
+      const tf = (v) => (f) => (v == null) ? v : f(v)
+      queryInfo.submitted = tf(queryInfo.submitted)(s => s.toISOString())
+      queryInfo.completed = tf(queryInfo.completed)(s => s.toISOString())
+
+      console.info(buzJson(queryInfo))
+    } else {
+      const {
         queryId,
+        schema,
         bytesScanned,
         executionTime,
+        submitted,
+        completed,
         finished,
         state,
-        outputLocation
-      }))
-    } else {
-      const { bucket, key } = outputLocation
-      console.info(`Query ${c.yellow(queryId)} ${athena.stateColor(state)} in ${c.blue(seconds(executionTime))}`)
+        outputLocation: {
+          bucket,
+          key
+        }
+      } = queryInfo
+
+      const succeeded = finished && state === 'SUCCEEDED'
+
+      const idStr = c.yellow(queryId)
+      const dbStr = c.blue(schema)
+      const stateStr = athena.stateColor(state)
+      const sizeStr = c.yellow(prettyBytes(bytesScanned))
+      const bytesStr = c.orange(bytesScanned.toLocaleString())
+      const costStr = c.green((bytesScanned / 1000000000000 * 5.0).toFixed(2))
+      const timeStr = c.blue(seconds(executionTime))
+      const startStr = c.grey(submitted.toISOString())
+      const endStr = c.grey(completed.toISOString())
+
+      console.info(`${idStr}@${dbStr} [${stateStr}]`)
+      console.info(`  submitted : ${startStr}`)
+
+      if (finished) {
+        console.info(`  completed : ${endStr}`)
+      }
+
+      console.info(`   ${finished ? 'duration' : ' elapsed'} : ${timeStr}`)
+      console.info(`    scanned : ${sizeStr} (${bytesStr} bytes)`)
+      console.info(`       cost : $${costStr}`)
+
       if (succeeded) {
-        console.info(` ${s3.makeUri({ bucket, key, color: true })}`)
+        console.info(`    results : ${s3.makeUri({ bucket, key, color: true })}`)
       }
     }
   } catch (error) {

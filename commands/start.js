@@ -44,7 +44,7 @@ async function handler ({
   const c = require('@buzuli/color')
 
   if (!resultBucket) {
-    console.error(c.red(`No result bucket specified.`))
+    console.error(c.red('No result bucket specified.'))
     process.exit(1)
   }
 
