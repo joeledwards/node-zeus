@@ -32,6 +32,12 @@ function builder (yargs) {
       desc: 'output summary record(s) as JSON',
       alias: 'j'
     })
+    .option('sample-size', {
+      type: 'number',
+      desc: 'number of bytes to sample from the result data',
+      default: 1024,
+      alias: 's'
+    })
     .option('follow', {
       type: 'boolean',
       desc: 'follow a query, with regular progress reports',
@@ -67,6 +73,7 @@ async function handler ({
   resultPrefix = '',
   token,
   json,
+  sampleSize,
   follow,
   pollInterval,
   timeout,
@@ -134,6 +141,7 @@ async function handler ({
       // Report on the outcome of the query
       const { completed, status } = await statusReport(queryId, {
         json,
+        sampleSize,
         athena,
         quiet,
         extended: !quiet
