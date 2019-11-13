@@ -29,12 +29,18 @@ function builder (yargs) {
       desc: 'output summary as a JSON record',
       alias: 'j'
     })
+    .option('verbose', {
+      type: 'boolean',
+      desc: 'increase output (especially on error)',
+      alias: 'v'
+    })
 }
 
 async function handler ({
   limit,
   extended,
-  json
+  json,
+  verbose
 }) {
   const c = require('@buzuli/color')
 
@@ -57,8 +63,8 @@ async function handler ({
         const {
           queryId,
           schema,
-          bytesScanned,
-          executionTime,
+          bytesScanned = 0,
+          executionTime = 0.0,
           submitted,
           state
         } = query
@@ -72,7 +78,7 @@ async function handler ({
         const timeStr = c.blue(seconds(executionTime))
         const startStr = c.grey(submitted.toISOString())
 
-        const idInfo = `${idStr}@${dbStr}`
+        const idInfo = `${idStr} @ ${dbStr}`
         const scanInfo = `scanned ${sizeStr} (${bytesStr} bytes | $${costStr})`
         const timeInfo = `in ${timeStr} {${startStr}}`
 
@@ -83,6 +89,9 @@ async function handler ({
     }
   } catch (error) {
     console.error(c.red(`Error listing queries: ${c.yellow(error)}`))
+    if (verbose) {
+      console.error(`Failure Details:\n`, error)
+    }
     process.exit(1)
   }
 }

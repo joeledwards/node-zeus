@@ -29,8 +29,35 @@ function builder (yargs) {
     })
     .option('json', {
       type: 'boolean',
-      desc: 'output summary as a JSON record',
+      desc: 'output summary record(s) as JSON',
       alias: 'j'
+    })
+    .option('follow', {
+      type: 'boolean',
+      desc: 'follow a query, with regular progress reports',
+      alias: 'f'
+    })
+    .option('timeout', {
+      type: 'number',
+      desc: 'max duration (in seconds) to follow the query',
+      default: 3600,
+      alias: 'T'
+    })
+    .option('poll-interval', {
+      type: 'number',
+      desc: 'polling frequency (in seconds) when following',
+      default: 5,
+      alias: 'P'
+    })
+    .option('quiet', {
+      type: 'boolean',
+      desc: 'no output when following; just status code and queryId',
+      alias: 'q'
+    })
+    .option('verbose', {
+      type: 'boolean',
+      desc: 'increase output (especially on error)',
+      alias: 'v'
     })
 }
 
@@ -39,7 +66,12 @@ async function handler ({
   resultBucket,
   resultPrefix = '',
   token,
-  json
+  json,
+  follow,
+  pollInterval,
+  timeout,
+  quiet,
+  verbose
 }) {
   const c = require('@buzuli/color')
 
@@ -53,6 +85,7 @@ async function handler ({
     const aws = require('../lib/aws')
     const buzJson = require('@buzuli/json')
     const promised = require('../lib/promised')
+    const statusReport = require('../lib/status-report')
 
     const athena = aws.athena()
 
@@ -70,18 +103,47 @@ async function handler ({
     })
 
     if (json) {
-      console.info(buzJson({
-        token,
-        queryId,
-        resultLocation
-      }))
+      if (quiet) {
+        console.info(JSON.stringify({ queryId }))
+      } else {
+        console.info(buzJson({
+          token,
+          queryId,
+          resultLocation
+        }))
+      }
     } else {
-      const { bucket, key } = resultLocation
-      console.info(`Started query ${c.yellow(queryId)}`)
-      console.info(`  ${c.green('s3')}://${c.blue(bucket)}/${c.yellow(key)}`)
+      if (quiet) {
+        console.info(queryId)
+      } else {
+        const { bucket, key } = resultLocation
+        console.info(`Started query ${c.yellow(queryId)}`)
+        console.info(`  ${c.green('s3')}://${c.blue(bucket)}/${c.yellow(key)}`)
+      }
+    }
+
+    if (follow) {
+      // Wait for the query to complete
+      await athena.queryDone(queryId, {
+        timeout: timeout * 1000,
+        pollInterval: pollInterval * 1000,
+        progress: !quiet,
+        quiet
+      })
+
+      // Report on the outcome of the query
+      const { completed, status } = await statusReport(queryId, {
+        json,
+        athena,
+        quiet,
+        extended: !quiet
+      })
     }
   } catch (error) {
-    console.error(c.red(`Error starting query: ${c.yellow(error)}`))
+    console.error(`Error ${follow ? 'running' : 'starting'} query: ${c.red(error)}`)
+    if (verbose) {
+      console.error(`Failure Details:\n`, error)
+    }
     process.exit(1)
   }
 }
