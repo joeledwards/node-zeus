@@ -139,7 +139,7 @@ async function handler ({
       })
 
       // Report on the outcome of the query
-      const { completed, status } = await statusReport(queryId, {
+      await statusReport(queryId, {
         json,
         sampleSize,
         athena,
@@ -150,7 +150,7 @@ async function handler ({
   } catch (error) {
     console.error(`Error ${follow ? 'running' : 'starting'} query: ${c.red(error)}`)
     if (verbose) {
-      console.error(`Failure Details:\n`, error)
+      console.error('Failure Details:\n', error)
     }
     process.exit(1)
   }

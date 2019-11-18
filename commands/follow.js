@@ -63,7 +63,7 @@ async function handler ({
   } catch (error) {
     console.error(`Error following query ${c.yellow(queryId)}: ${c.red(error)}`)
     if (verbose) {
-      console.error(`Failure Details:\n`, error)
+      console.error('Failure Details:\n', error)
     }
     process.exit(1)
   }
