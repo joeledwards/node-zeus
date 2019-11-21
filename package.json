@@ -40,6 +40,7 @@
     "@buzuli/meter": "^1.0.1",
     "@buzuli/throttle": "^2.0.2",
     "aws-sdk": "^2.575.0",
+    "bole": "^4.0.0",
     "byline": "^5.0.0",
     "durations": "^3.4.1",
     "gunzip-maybe": "^1.4.1",
