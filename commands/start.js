@@ -1,5 +1,5 @@
 module.exports = {
-  command: 'start <query-file>',
+  command: 'start <query>',
   desc: 'start a new Athena query',
   builder,
   handler
@@ -8,9 +8,9 @@ module.exports = {
 function builder (yargs) {
   yargs
     .env('ZEUS')
-    .positional('query-file', {
+    .positional('query', {
       type: 'string',
-      desc: 'the SQL file containing the Athena query to invoke'
+      desc: 'the query or path to a file containing the query'
     })
     .option('result-bucket', {
       type: 'string',
@@ -68,7 +68,7 @@ function builder (yargs) {
 }
 
 async function handler ({
-  queryFile,
+  query: querySource,
   resultBucket,
   resultPrefix = '',
   token,
@@ -94,9 +94,29 @@ async function handler ({
     const promised = require('../lib/promised')
     const statusReport = require('../lib/status-report')
 
+    const getQuery = async (querySource) => {
+      let query = querySource
+      let isFile = false
+
+      try {
+        const fileStat = await promised(h => fs.stat(querySource, h))
+        isFile = fileStat.isFile()
+      } catch (error) {
+        if (error.code !== 'ENOENT') {
+          throw error
+        }
+      }
+
+      if (isFile) {
+        query = await promised(h => fs.readFile(querySource, { encoding: 'utf-8' }, h))
+      }
+
+      return query
+    }
+
     const athena = aws.athena()
 
-    const query = await promised(h => fs.readFile(queryFile, { encoding: 'utf-8' }, h))
+    const query = await getQuery(querySource)
 
     const {
       queryId,
