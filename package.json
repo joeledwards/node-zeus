@@ -4,6 +4,7 @@
   "description": "Utility functions and CLI for AWS Athena",
   "main": "lib/index.js",
   "bin": {
+    "zeus": "./bin/zeus.js",
     "zues": "./bin/zeus.js"
   },
   "files": [
