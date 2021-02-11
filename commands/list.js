@@ -1,8 +1,10 @@
+const handler = require('../lib/handler')
+
 module.exports = {
   command: 'list',
   desc: 'list Athena queries',
   builder,
-  handler
+  handler: handler(listQueries)
 }
 
 function builder (yargs) {
@@ -36,16 +38,18 @@ function builder (yargs) {
     })
 }
 
-async function handler ({
-  limit,
-  extended,
-  json,
-  verbose
+async function listQueries ({
+  aws,
+  options: {
+    limit,
+    extended,
+    json,
+    verbose
+  }
 }) {
   const c = require('@buzuli/color')
 
   try {
-    const aws = require('../lib/aws')
     const buzJson = require('@buzuli/json')
     const prettyBytes = require('pretty-bytes')
     const { seconds } = require('durations')

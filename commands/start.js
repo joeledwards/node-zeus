@@ -160,6 +160,7 @@ async function handler ({
 
       // Report on the outcome of the query
       await statusReport(queryId, {
+        aws,
         json,
         sampleSize,
         athena,

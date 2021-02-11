@@ -1,8 +1,10 @@
+const handler = require('../lib/handler')
+
 module.exports = {
   command: 'show <query-id>',
   desc: 'show the details of a query',
   builder,
-  handler
+  handler: handler(showQuery)
 }
 
 function builder (yargs) {
@@ -35,12 +37,15 @@ function builder (yargs) {
     })
 }
 
-async function handler ({
-  queryId,
-  json,
-  extended,
-  sampleSize,
-  verbose
+async function showQuery ({
+  aws,
+  options: {
+    queryId,
+    json,
+    extended,
+    sampleSize,
+    verbose
+  }
 }) {
   const c = require('@buzuli/color')
   const statusReport = require('../lib/status-report')

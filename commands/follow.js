@@ -1,8 +1,10 @@
+const handler = require('../lib/handler')
+
 module.exports = {
   command: 'follow <query-id>',
   desc: 'follow an existing Athena query',
   builder,
-  handler
+  handler: handler(follow)
 }
 
 function builder (yargs) {
@@ -36,15 +38,17 @@ function builder (yargs) {
     })
 }
 
-async function handler ({
-  queryId,
-  pollInterval,
-  timeout,
-  quiet,
-  verbose
+async function follow ({
+  aws,
+  options: {
+    queryId,
+    pollInterval,
+    timeout,
+    quiet,
+    verbose
+  }
 }) {
   const c = require('@buzuli/color')
-  const aws = require('../lib/aws')
   const statusReport = require('../lib/status-report')
 
   const athena = aws.athena()

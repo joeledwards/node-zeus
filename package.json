@@ -36,24 +36,25 @@
   },
   "homepage": "https://github.com/joeledwards/node-zeus#readme",
   "dependencies": {
+    "@buzuli/app": "^1.2.1",
+    "@buzuli/aws": "^3.3.0",
     "@buzuli/color": "^2.2.2",
     "@buzuli/json": "^2.1.0",
-    "@buzuli/meter": "^1.1.1",
+    "@buzuli/meter": "^1.4.0",
     "@buzuli/promised": "^1.0.0",
     "@buzuli/throttle": "^2.0.2",
-    "aws-sdk": "^2.709.0",
     "bole": "^4.0.0",
     "byline": "^5.0.0",
     "durations": "^3.4.2",
     "gunzip-maybe": "^1.4.2",
-    "mem": "^6.1.0",
-    "moment": "^2.27.0",
-    "nodemailer": "^6.4.10",
+    "mem": "^8.0.0",
+    "moment": "^2.29.1",
+    "nodemailer": "^6.4.17",
     "once": "^1.4.0",
-    "pretty-bytes": "^5.3.0",
-    "yargs": "^15.3.1"
+    "pretty-bytes": "^5.4.1",
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "standard": "^14.3.4"
+    "standard": "^16.0.3"
   }
 }

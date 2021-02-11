@@ -1,8 +1,10 @@
+const handler = require('../lib/handler')
+
 module.exports = {
   command: 'cancel <query-id>',
   desc: 'cancel the identified query',
   builder,
-  handler
+  handler: handler(cancel)
 }
 
 function builder (yargs) {
@@ -19,12 +21,14 @@ function builder (yargs) {
     })
 }
 
-async function handler ({
-  queryId,
-  verbose
+async function cancel ({
+  aws,
+  options: {
+    queryId,
+    verbose
+  }
 }) {
   const c = require('@buzuli/color')
-  const aws = require('../lib/aws')
   const athena = aws.athena()
 
   try {
