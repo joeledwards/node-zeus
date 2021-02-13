@@ -1,11 +1,11 @@
 {
   "name": "zeus",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Utility functions and CLI for AWS Athena",
   "main": "lib/index.js",
   "bin": {
-    "zeus": "./bin/zeus.js",
-    "zues": "./bin/zeus.js"
+    "zeus": "bin/zeus.js",
+    "zues": "bin/zeus.js"
   },
   "files": [
     "package.json",
