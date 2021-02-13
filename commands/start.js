@@ -1,8 +1,10 @@
+const handler = require('../lib/handler')
+
 module.exports = {
   command: 'start <query>',
   desc: 'start a new Athena query',
   builder,
-  handler
+  handler: handler(startQuery)
 }
 
 function builder (yargs) {
@@ -67,32 +69,36 @@ function builder (yargs) {
     })
 }
 
-async function handler ({
-  query: querySource,
-  resultBucket,
-  resultPrefix = '',
-  token,
-  json,
-  sampleSize,
-  follow,
-  pollInterval,
-  timeout,
-  quiet,
-  verbose
+async function startQuery ({
+  aws,
+  options: {
+    query: querySource,
+    resultBucket,
+    resultPrefix = '',
+    token,
+    json,
+    sampleSize,
+    follow,
+    pollInterval,
+    timeout,
+    quiet,
+    verbose
+  }
 }) {
   const c = require('@buzuli/color')
 
   if (!resultBucket) {
-    console.error(c.red('No result bucket specified.'))
+    console.error(c.red('No result bucket specified (--result-bucket option or ZEUS_RESULT_BUCKET env. var.).'))
     process.exit(1)
   }
 
   try {
     const fs = require('fs')
-    const aws = require('../lib/aws')
     const buzJson = require('@buzuli/json')
-    const promised = require('../lib/promised')
+    const promised = require('@buzuli/promised')
     const statusReport = require('../lib/status-report')
+
+    const aws = await (require('@buzuli/aws').resolve())
 
     const getQuery = async (querySource) => {
       let query = querySource
@@ -120,7 +126,7 @@ async function handler ({
 
     const {
       queryId,
-      resultLocation
+      outputLocation
     } = await athena.startQuery({
       resultBucket,
       resultPrefix,
@@ -136,14 +142,14 @@ async function handler ({
         console.info(buzJson({
           token,
           queryId,
-          resultLocation
+          outputLocation
         }))
       }
     } else {
       if (quiet) {
         console.info(queryId)
       } else {
-        const { bucket, key } = resultLocation
+        const { bucket, key } = outputLocation
         console.info(`Started query ${c.yellow(queryId)}`)
         console.info(`  ${c.green('s3')}://${c.blue(bucket)}/${c.yellow(key)}`)
       }

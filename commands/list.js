@@ -56,11 +56,12 @@ async function listQueries ({
 
     const athena = aws.athena()
 
+    const tf = (v, d) => (f) => (v == null) ? (d || v) : f(v)
+
     for await (const query of athena.scanQueries({ limit, extended })) {
       if (json) {
-        const tf = (v) => (f) => (v == null) ? v : f(v)
-        query.submitted = tf(query.submitted)(s => s.toISOString())
-        query.completed = tf(query.completed)(s => s.toISOString())
+        query.submittedAt = tf(query.submittedAt, '--')(s => s.toISOString())
+        query.completedAt = tf(query.completedAt, '--')(s => s.toISOString())
 
         console.info(buzJson(query, { indent: !!extended }))
       } else if (extended) {
@@ -69,7 +70,7 @@ async function listQueries ({
           schema,
           bytesScanned = 0,
           executionTime = 0.0,
-          submitted,
+          submittedAt,
           state
         } = query
 
@@ -80,7 +81,7 @@ async function listQueries ({
         const bytesStr = c.orange(bytesScanned.toLocaleString())
         const costStr = c.green((bytesScanned / 1000000000000 * 5.0).toFixed(2))
         const timeStr = c.blue(seconds(executionTime))
-        const startStr = c.grey(submitted.toISOString())
+        const startStr = c.grey(tf(submittedAt, '--')(s => s.toISOString()))
 
         const idInfo = `${idStr} @ ${dbStr}`
         const scanInfo = `scanned ${sizeStr} (${bytesStr} bytes | $${costStr})`

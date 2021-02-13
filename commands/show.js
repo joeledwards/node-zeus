@@ -51,7 +51,7 @@ async function showQuery ({
   const statusReport = require('../lib/status-report')
 
   try {
-    await statusReport(queryId, { json, extended, sampleSize })
+    await statusReport(queryId, { aws, json, extended, sampleSize })
   } catch (error) {
     console.error(`Error showing info for query ${c.yellow(queryId)}: ${c.red(error)}`)
     if (verbose) {

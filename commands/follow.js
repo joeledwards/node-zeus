@@ -63,7 +63,7 @@ async function follow ({
     })
 
     // Report on the outcome of the query
-    await statusReport(queryId, { athena, quiet, extended: !quiet })
+    await statusReport(queryId, { aws, quiet, extended: !quiet })
   } catch (error) {
     console.error(`Error following query ${c.yellow(queryId)}: ${c.red(error)}`)
     if (verbose) {
