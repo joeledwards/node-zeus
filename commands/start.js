@@ -14,6 +14,11 @@ function builder (yargs) {
       type: 'string',
       desc: 'the query or path to a file containing the query'
     })
+    .option('workgroup', {
+      type: 'string',
+      desc: 'The Athena workgroup in which the query should be run',
+      alias: ['w', 'wg', 'work-group']
+    })
     .option('result-bucket', {
       type: 'string',
       desc: 'S3 bucket for the query results',
@@ -73,6 +78,7 @@ async function startQuery ({
   aws,
   options: {
     query: querySource,
+    workgroup: workGroup,
     resultBucket,
     resultPrefix = '',
     token,
@@ -128,6 +134,7 @@ async function startQuery ({
       queryId,
       outputLocation
     } = await athena.startQuery({
+      workGroup,
       resultBucket,
       resultPrefix,
       query,
@@ -150,7 +157,8 @@ async function startQuery ({
         console.info(queryId)
       } else {
         const { bucket, key } = outputLocation
-        console.info(`Started query ${c.yellow(queryId)}`)
+        const workGroupStr = workGroup ? `in workgroup ${c.blue(workGroup)}` : 'in the default workgroup'
+        console.info(`Started query ${c.yellow(queryId)} ${workGroupStr}`)
         console.info(`  ${c.green('s3')}://${c.blue(bucket)}/${c.yellow(key)}`)
       }
     }
