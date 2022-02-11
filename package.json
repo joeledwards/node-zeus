@@ -37,7 +37,7 @@
   "homepage": "https://github.com/joeledwards/node-zeus#readme",
   "dependencies": {
     "@buzuli/app": "^1.2.1",
-    "@buzuli/aws": "^4.3.4",
+    "@buzuli/aws": "^4.4.0",
     "@buzuli/color": "^2.3.1",
     "@buzuli/json": "^2.1.0",
     "@buzuli/meter": "^1.4.0",

@@ -19,6 +19,16 @@ function builder (yargs) {
       desc: 'The Athena workgroup in which the query should be run',
       alias: ['w', 'wg', 'work-group']
     })
+    .option('catalog', {
+      type: 'string',
+      desc: 'The catalog in which to locate tables (defaults to AWS Glue)',
+      alias: ['c']
+    })
+    .option('database', {
+      type: 'string',
+      desc: 'The database (schema) in which to locate tables which have not database declared',
+      alias: ['d', 'db', 'schema']
+    })
     .option('result-bucket', {
       type: 'string',
       desc: 'S3 bucket for the query results',
@@ -79,6 +89,8 @@ async function startQuery ({
   options: {
     query: querySource,
     workgroup: workGroup,
+    catalog,
+    database,
     resultBucket,
     resultPrefix = '',
     token,
@@ -135,6 +147,8 @@ async function startQuery ({
       outputLocation
     } = await athena.startQuery({
       workGroup,
+      database,
+      catalog,
       resultBucket,
       resultPrefix,
       query,
