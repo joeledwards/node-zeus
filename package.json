@@ -17,7 +17,7 @@
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap ./test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,8 @@
     "athena",
     "aws",
     "presto",
-    "sql"
+    "sql",
+    "trino"
   ],
   "author": "Joel Edwards <joeledwards@gmail.com>",
   "license": "ISC",
@@ -43,6 +44,7 @@
     "@buzuli/meter": "^1.4.0",
     "@buzuli/promised": "^1.0.0",
     "@buzuli/throttle": "^2.0.2",
+    "@buzuli/url": "^1.0.1",
     "bole": "^4.0.0",
     "byline": "^5.0.0",
     "durations": "^3.4.2",
@@ -55,6 +57,7 @@
     "yargs": "^17.3.1"
   },
   "devDependencies": {
-    "standard": "^16.0.4"
+    "standard": "^16.0.4",
+    "tap": "^15.1.6"
   }
 }
